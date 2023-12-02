@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AJAX Form</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>User Details</h1>
+  <form id="dataForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" placeholder="Name" required><br><br>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required><br><br>
+
+    <label for="contact">Contact:</label>
+    <input type="tel" id="contact" placeholder="Contact" pattern="[0-9]{10}" title="Please enter a 10-digit contact number" required><br><br>
+
+    <label for="native">Native:</label>
+    <input type="text" id="native" placeholder="Native" required><br><br>
+
+    <button type="button" onclick="validateAndSave()">Submit</button>
+    <button type="button" id="updateBtn" style="display: none;" onclick="updateData()">Update</button>
+  </form>
+  <br><br>
+  <table id="dataTable" border="1">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Contact</th>
+        <th>Native</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <!-- Data will be displayed here -->
+    </tbody>
+  </table>
+
+  <script>
+    function validateAndSave() {
+      var name = $('#name').val();
+      var email = $('#email').val();
+      var contact = $('#contact').val();
+      var native = $('#native').val();
+
+      if (name && email && contact && native) {
+        saveData();
+      } else {
+        alert('Please fill in all fields.');
+      }
+    }
+
+    
+    function validateAndSave() {
+      var name = $('#name').val();
+      var email = $('#email').val();
+      var contact = $('#contact').val();
+      var native = $('#native').val();
+
+      if (name && email && contact && native) {
+        saveData();
+      } else {
+        alert('Please fill in all fields.');
+      }
+    }
+
+    function saveData() {
+      var name = $('#name').val();
+      var email = $('#email').val();
+      var contact = $('#contact').val();
+      var native = $('#native').val();
+
+      $.ajax({
+        url: 'process.php',
+        type: 'POST',
+        data: {
+          action: 'save',
+          name: name,
+          email: email,
+          contact: contact,
+          native: native
+        },
+        success: function(response) {
+          $('#tableBody').append(response);
+          $('#dataForm')[0].reset(); // Reset the form after successful save
+        }
+      });
+    }
+
+    function editRow(row) {
+      var cells = $(row).find('td');
+      var name = $(cells[0]).text();
+      var email = $(cells[1]).text();
+      var contact = $(cells[2]).text();
+      var native = $(cells[3]).text();
+
+      $('#name').val(name);
+      $('#email').val(email);
+      $('#contact').val(contact);
+      $('#native').val(native);
+
+      $('#updateBtn').show().data('row', row); // Store the row for update
+    }
+
+    function updateData() {
+      var row = $('#updateBtn').data('row');
+      var cells = $(row).find('td');
+
+      var name = $('#name').val();
+      var email = $('#email').val();
+      var contact = $('#contact').val();
+      var native = $('#native').val();
+
+      $(cells[0]).text(name);
+      $(cells[1]).text(email);
+      $(cells[2]).text(contact);
+      $(cells[3]).text(native);
+
+      $('#updateBtn').hide();
+
+      // Perform AJAX update operation here
+      // Reset the form after successful update
+      $('#dataForm')[0].reset();
+    }
+
+    function deleteRow(row) {
+      $(row).closest('tr').remove();
+      // Perform AJAX delete operation here
+    }
+  
+    // Functions for saveData, updateData, editRow, deleteRow remain the same as provided in the previous code snippets
+  </script>
+</body>
+</html>
